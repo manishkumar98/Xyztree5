@@ -110,13 +110,16 @@ function reducers(state = data, action) {
       nodex = stack.pop();
       //console.log("stack1", nodex);
       if (nodex && nodex.id === action.id.id) {
-        nodex.children.push({
-          id: "2" + Math.abs(Math.random() * 100),
-          name: "Counter",
-          counter: 0,
-          children: [],
-          parentId: action.id.id
-        });
+        // if (!nodex.children) nodex.children.push({});
+        console.log("12x", nodex);
+        nodex.children &&
+          nodex.children.splice(nodex.children.length, 0, {
+            id: "2" + Math.abs(Math.random() * 100),
+            parentId: action.id.id,
+            name: "Counter",
+            counter: 0,
+            children: []
+          });
         break;
       }
 
@@ -206,11 +209,20 @@ function reducers(state = data, action) {
         console.log("len1", len1, nodey.children);
         var f = 0;
         for (var u = 0; u < len1; u++) {
-          console.log("asd", nodey.children[u].id + " " + action.id.id);
-          if (nodey.children[u].id === action.id.id) {
+          // console.log("asd", nodey.children[u].id + " " + action.id.id);
+          if (nodey.children && nodey.children[u].id === action.id.id) {
             f = 1;
             console.log("here", nodey);
-            break;
+            var children1 = nodey.children;
+            if (f === 1 && children1) {
+              children1 = children1.forEach(function (o) {
+                o.children1 =
+                  o.children1 &&
+                  o.children1.filter((id) => id.id !== action.id.id);
+              });
+            }
+            nodey.children = children1;
+            // break;
           } else if (
             nodey.children[u].children &&
             nodey.children[u].children.length > 0
@@ -218,11 +230,14 @@ function reducers(state = data, action) {
             stack1.push(nodey.children[u]);
           }
         }
-        if (f === 1 && nodey.children) {
-          nodey.children = nodey.children.forEach(function (o) {
-            o.children = o.children.filter((id) => id.id !== action.id.id);
+        /* if (f === 1 && children1) {
+          children1 = children1.forEach(function (o) {
+            o.children = o.children.filter((id) => {
+              id.id !== action.id.id;
+            });
           });
-        }
+        }*/
+        // if (nodey.children === undefined) nodey.children = [];
       }
       // if (nodex.id === action.id.parentId) {
       //console.log("alpha&",nodex.id);
